@@ -6,7 +6,7 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class KlijentController
+    public class KlijentController: ControllerBase
     {
         // Dependency injection
         // Definiraš privatno svojstvo
@@ -23,7 +23,15 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return new JsonResult(_context.Klijenti.ToList());
+            try
+            {
+                return new JsonResult(_context.Klijenti.ToList());
+            }
+            catch (Exception ex)
+            {
+return new JsonResult(ex.ToString());
+            }
+            
         }
 
         [HttpPost]
