@@ -43,7 +43,7 @@ namespace Backend.Controllers
             smjerIzBaze.Ime = klijent.Ime;
             smjerIzBaze.Prezime = klijent.Prezime;
             smjerIzBaze.Email = klijent.Email;
-            smjerIzBaze.KontaktBroj =klijent.KontaktBroj;
+            smjerIzBaze.KontaktBroj = klijent.KontaktBroj;
 
             _context.Klijenti.Update(smjerIzBaze);
             _context.SaveChanges();
@@ -59,7 +59,7 @@ namespace Backend.Controllers
             var smjerIzBaze = _context.Klijenti.Find(sifra);
             _context.Klijenti.Remove(smjerIzBaze);
             _context.SaveChanges();
-            return new JsonResult(new { poruka="Obrisano"});
+            return new JsonResult(new { poruka = "Obrisano" });
         }
 
     }
