@@ -48,9 +48,10 @@ namespace Backend.Controllers
                 };
 
                 _context.Osoba.Add(novaOsoba);
+               
             }
-
-                return Ok("Dodane su" + brojOsoba +  "nove osobe");
+            _context.SaveChanges();
+            return Ok("Dodane su" + brojOsoba +  "nove osobe");
             }
         
     
