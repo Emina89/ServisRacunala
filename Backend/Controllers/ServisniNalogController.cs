@@ -21,7 +21,15 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return new JsonResult(_context.ServisniNalozi.ToList());
+            try
+            {
+                return new JsonResult(_context.ServisniNalozi.ToList());
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(ex.ToString());
+            }
+
         }
 
         [HttpPost]
