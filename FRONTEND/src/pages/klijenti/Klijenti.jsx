@@ -26,8 +26,8 @@ export default function Klijenti(){
 
 
 
-    async function obrisiAsync(sifra){
-        const odgovor = await KlijentService._delete(sifra);
+    async function obrisiAsync(id){
+        const odgovor = await KlijentService._delete(id);
         if (odgovor.greska){
             console.log(odgovor.poruka);
             alert('Pogledaj konzolu');
@@ -36,8 +36,8 @@ export default function Klijenti(){
         dohvatiKlijente();
     }
 
-    function obrisi(sifra){
-        obrisiAsync(sifra);
+    function obrisi(id){
+        obrisiAsync(id);
     }
 
     return(
@@ -67,7 +67,7 @@ export default function Klijenti(){
                                 </td>
                                 <td>
                                     <Button 
-                                    onClick={()=>obrisi(klijent.sifra)}
+                                    onClick={()=>obrisi(klijent.id)}
                                     variant='danger'
                                     >
                                         Obriši

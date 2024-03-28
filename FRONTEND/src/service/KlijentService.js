@@ -26,8 +26,8 @@ async function post(klijent){
     })
 }
 
-async function _delete(sifraKlijenta){
-    return await HttpService.delete(ime + '/'+ sifraKlijenta)
+async function _delete(idKlijenta){
+    return await HttpService.delete(ime + '/'+ idKlijenta)
     .then((odgovor)=>{
         //console.table(odgovor.data);
         return {greska: false, poruka: odgovor.data.poruka};
