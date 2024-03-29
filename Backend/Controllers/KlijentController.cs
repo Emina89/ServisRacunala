@@ -6,33 +6,34 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class KlijentController: ControllerBase
+    public class KlijentController : ControllerBase
     {
-        // Dependency injection
-        // Definiraš privatno svojstvo
+
         private readonly EdunovaContext _context;
 
-        // Dependency injection
-        // U konstruktoru primir instancu i dodjeliš privatnom svojstvu
+
         public KlijentController(EdunovaContext context)
         {
             _context = context;
         }
 
-
         [HttpGet]
         public IActionResult Get()
         {
-            try
-            {
-                return new JsonResult(_context.Klijenti.ToList());
-            }
-            catch (Exception ex)
-            {
-return new JsonResult(ex.ToString());
-            }
-            
+            return new JsonResult(_context.Klijenti.ToList());
         }
+
+        [HttpGet]
+        [Route("{sifra:int}")]
+
+        public IActionResult GetBySifra(int sifra)
+        {
+            return new JsonResult(_context.Klijenti.Find(sifra));
+        }
+
+
+    
+
 
         [HttpPost]
         public IActionResult Post(Klijent klijent)

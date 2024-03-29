@@ -3,6 +3,6 @@ export const RoutesNames = {
 
     KLIJENT_PREGLED: '/klijenti',
     KLIJENT_NOVI: '/klijenti/dodaj',
-    KLIJENT_PROMJENI: '/klijenti/:sifra'
+    KLIJENT_PROMJENI: '/klijenti/:id'
     
 };

@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import KlijentService from '../../service/KlijentService';
 import { Button, Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {RoutesNames} from '../../constants'
 
 
 export default function Klijenti(){
     const [klijenti, setKlijenti] = useState();
+    const navigate = useNavigate();
+
 
 
     async function dohvatiKlijente(){
@@ -47,6 +49,7 @@ export default function Klijenti(){
             <Table striped bordered hover responsive>
                     <thead>
                         <tr>
+                            <th>R.br.</th>
                             <th>Ime</th>
                             <th>Prezime</th>
                             <th>Email</th>
@@ -58,6 +61,7 @@ export default function Klijenti(){
                     {klijenti && typeof klijenti === 'object' && Array.isArray(klijenti) && klijenti.map((klijent, index) => (
 
                             <tr key={index}>
+                                <td>{index + 1}</td> 
                                 <td>{klijent.ime}</td>
                                 <td>{klijent.prezime}</td>
                                 <td>{klijent.email}</td>
@@ -71,6 +75,11 @@ export default function Klijenti(){
                                     variant='danger'
                                     >
                                         Obriši
+                                    </Button>
+                                    <Button 
+                                    onClick={()=>{navigate(`/klijenti/${klijent.id}`)}} 
+                                    >
+                                        Promjeni
                                     </Button>
                                 </td>
                             </tr>

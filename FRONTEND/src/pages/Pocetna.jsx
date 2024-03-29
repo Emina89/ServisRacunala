@@ -15,26 +15,26 @@ export default function Pocetna() {
     return (
         <Container>
             <div className={`welcome-message ${animationClass}`}>
-                Dobrodošli na aplikaciju za Servis Računala
+                Servis Računala za sve Vaše kvarove i probleme
             </div>
             <style jsx>{`
                 .welcome-message {
-                    font-size: 35px; /* Povećava font na 24px */
-                    font-weight: bold; /* Postavlja debeli font */
-                    color: purple; /* Postavlja crvenu boju teksta */
-                    text-shadow: 8px 6px 8px rgba(0, 0, 0, 0.5); /* Dodaje osjenčanje tekstu */
-                    text-align: center; /* Postavlja tekst na sredinu */
-                    white-space: nowrap; /* Sprječava prelazak teksta u novi red */
+                    font-size: 35px; 
+                    font-weight: bold; 
+                    color: purple; 
+                    text-shadow: 8px 6px 8px rgba(0, 0, 0, 0.5); 
+                    text-align: center; 
+                    white-space: nowrap; 
                 }
                 .animate {
-                    animation: moveLeftRight 4s infinite alternate; /* Dodaje animaciju */
+                    animation: moveLeftRight 4s infinite alternate; 
                 }
                 @keyframes moveLeftRight {
                     0% {
-                        transform: translateX(-50px); /* Početna pozicija - pomiče se ulijevo */
+                        transform: translateX(-50px); 
                     }
                     100% {
-                        transform: translateX(50px); /* Krajnja pozicija - pomiče se udesno */
+                        transform: translateX(50px); 
                     }
                 }
             `}</style>

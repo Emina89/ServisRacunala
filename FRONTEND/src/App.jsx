@@ -9,6 +9,7 @@ import { RoutesNames } from './constants'
 import Pocetna from './pages/Pocetna'
 import Klijenti from './pages/klijenti/Klijenti'
 import KlijentiDodaj from './pages/klijenti/KlijentiDodaj'
+import KlijentiPromjena from './pages/klijenti/KlijentiPromjena'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
 
         <Route path={RoutesNames.KLIJENT_PREGLED} element={<Klijenti />} />
         <Route path={RoutesNames.KLIJENT_NOVI} element={<KlijentiDodaj />} />
+        <Route path={RoutesNames.KLIJENT_PROMJENI} element={<KlijentiPromjena />} />
       </Routes>
     </>
   )
