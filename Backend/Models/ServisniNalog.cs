@@ -6,9 +6,9 @@ namespace Backend.Models
     {
       
         public int KlijentId { get; set; }
-        public Klijent Klijent { get; set; }
-        public DateTime DatumNaloga { get; set; }
-        public string OpisKvara { get; set; }
+        public Klijent ? Klijent { get; set; }
+        public DateTime ? DatumNaloga { get; set; }
+        public string? OpisKvara { get; set; }
 
         
 

@@ -44,9 +44,18 @@ export default function Klijenti(){
 
     return(
         <>
-           <Container>
-            <Link to={RoutesNames.KLIJENT_NOVI}> Dodaj </Link>
-            <Table striped bordered hover responsive>
+            <Container>
+                <Button
+                    as={Link}
+                    to={RoutesNames.KLIJENT_NOVI}
+                    className="custom-blue-btn"
+                    style={{ width: '15%', marginRight: '5px' }}
+                >
+                    
+                    Dodaj klijenta
+                    
+                </Button>
+                <Table striped bordered hover responsive>
                     <thead>
                         <tr>
                             <th>R.br.</th>
@@ -56,6 +65,17 @@ export default function Klijenti(){
                             <th>KontakBroj</th>
                             <th>Akcija</th>
                         </tr>
+                        
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            
+                        </tr>
+                        
                     </thead>
                     <tbody>
                     {klijenti && typeof klijenti === 'object' && Array.isArray(klijenti) && klijenti.map((klijent, index) => (
@@ -70,17 +90,26 @@ export default function Klijenti(){
                                     
                                 </td>
                                 <td>
+                                <hr />
                                     <Button 
                                     onClick={()=>obrisi(klijent.id)}
                                     variant='danger'
+                                    style={{ width: '30%', marginRight: '5px' }}
                                     >
+                                        
                                         Obriši
+                                        
                                     </Button>
+    
+                                   
                                     <Button 
                                     onClick={()=>{navigate(`/klijenti/${klijent.id}`)}} 
+                                    style={{ width: '50%', marginLeft: '5px' }}
                                     >
                                         Promjeni
+                                       
                                     </Button>
+                                    <hr />
                                 </td>
                             </tr>
                         ))}
