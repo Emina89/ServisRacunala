@@ -6,11 +6,11 @@ async function get(){
     return await HttpService.get(ime)
     .then((odgovor)=>{
         //console.table(odgovor.data);
-        return odgovor.data;
+        return {greska: false, poruka: odgovor.data};
     })
     .catch((e)=>{
         //console.log(e);
-        return e;
+        return {greska: true, poruka: e};
     })
 }
 

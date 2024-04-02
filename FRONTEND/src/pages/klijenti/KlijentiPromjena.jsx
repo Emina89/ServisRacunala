@@ -11,7 +11,7 @@ export default function KlijentiPromjena(){
     const [klijent, setKlijent] = useState({});
 
    async function dohvatiKlijent(){
-        const o = await KlijentService.getByid(routeParams.id);
+        const o = await KlijentService.getById(routeParams.id);
         if(o.greska){
             console.log(o.poruka);
             alert('pogledaj konzolu');
@@ -48,7 +48,7 @@ export default function KlijentiPromjena(){
                       
         };
         //console.log(routeParams.id);
-        //console.log(smjer);
+        //console.log(klijent);
         promjeni(klijent);
 
     }
@@ -60,22 +60,22 @@ export default function KlijentiPromjena(){
 
             <Form.Group controlId="ime">
                 <Form.Label>Ime</Form.Label>
-                <Form.Control type="text" name="ime" required />
+                <Form.Control defaultValue={klijent.ime} type="text" name="ime" required />
             </Form.Group>
 
             <Form.Group controlId="prezime">
                 <Form.Label>Prezime</Form.Label>
-                <Form.Control type="text" name="prezime" />
+                <Form.Control defaultValue={klijent.prezime} type="text" name="prezime" />
             </Form.Group>
 
             <Form.Group controlId="email">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="text" name="email" />
+                <Form.Control defaultValue={klijent.email} type="text" name="email" />
             </Form.Group>
 
             <Form.Group controlId="kontaktBroj">
                 <Form.Label>Kontakt Broj</Form.Label>
-                <Form.Control type="text" name="kontaktBroj" />
+                <Form.Control defaultValue={klijent.kontaktBroj} type="text" name="kontaktBroj" />
             </Form.Group>
 
             

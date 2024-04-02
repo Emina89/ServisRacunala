@@ -15,7 +15,7 @@ export default function Klijenti(){
     async function dohvatiKlijente(){
         await KlijentService.get()
         .then((odg)=>{
-            setKlijenti(odg);
+            setKlijenti(odg.poruka);
         })
         .catch((e)=>{
             console.log(e);
