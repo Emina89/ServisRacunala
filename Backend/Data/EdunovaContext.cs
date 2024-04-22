@@ -13,9 +13,9 @@ namespace Backend.Data
         }
 
         public DbSet<Klijent> Klijenti { get; set; }
-        public DbSet<ServisniNalog> ServisniNalozi { get; set; }
-        public DbSet<Osoba> Osoba { get; set; }
-
+        public DbSet<ServisniNalozi> ServisniNalozi { get; set; }
+        public DbSet<PrimkaServisa> PrimkaServisa { get; set; }
+        public DbSet<AktivnostServis> AktivnostServis { get; set; }
 
     }
 }

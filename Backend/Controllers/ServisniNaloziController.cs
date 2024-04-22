@@ -9,11 +9,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class ServisniNalogController : ControllerBase
+    public class ServisniNaloziController : ControllerBase
     {
         private readonly EdunovaContext _context;
 
-        public ServisniNalogController(EdunovaContext context)
+        public ServisniNaloziController(EdunovaContext context)
         {
             _context = context;
         }
@@ -33,7 +33,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(ServisniNalog servisniNalog)
+        public IActionResult Post(ServisniNalozi servisniNalog)
         {
             _context.ServisniNalozi.Add(servisniNalog);
             _context.SaveChanges();
@@ -41,7 +41,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, ServisniNalog servisniNalog)
+        public IActionResult Put(int id, ServisniNalozi servisniNalog)
         {
             if (id != servisniNalog.Id)
             {

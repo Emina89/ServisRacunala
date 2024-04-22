@@ -1,75 +1,35 @@
-﻿using Backend.Data;
+﻿using System.Text;
 using Backend.Models;
+using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class KlijentController : ControllerBase
+    public class KlijentController : EdunovaController<Klijent, KlijentDTORead, KlijentDTOInsertUpdate>
     {
-
-        private readonly EdunovaContext _context;
-
-
-        public KlijentController(EdunovaContext context)
+        public KlijentController(EdunovaContext context) : base(context)
         {
-            _context = context;
+            DbSet = _context.Klijenti;
         }
-
-        [HttpGet]
-        public IActionResult Get()
+        protected override void KontrolaBrisanje(Klijent entitet)
         {
-            return new JsonResult(_context.Klijenti.ToList());
+            var lista = _context.ServisniNalozi
+                .Include(x => x.Klijent)
+                .Where(x => x.Klijent.Id == entitet.Id)
+                .ToList();
+            if (lista != null && lista.Count > 0)
+            {
+                StringBuilder sb = new();
+                sb.Append("Klijent se ne može obrisati jer se nalazi na servisnim nalozima: ");
+                foreach (var e in lista)
+                {
+                    sb.Append(e.Klijent).Append(", ");
+                }
+                throw new Exception(sb.ToString()[..^2]); // umjesto sb.ToString().Substring(0, sb.ToString().Length - 2)
+            }
         }
-
-        [HttpGet]
-        [Route("{sifra:int}")]
-
-        public IActionResult GetBySifra(int sifra)
-        {
-            return new JsonResult(_context.Klijenti.Find(sifra));
-        }
-
-
-    
-
-
-        [HttpPost]
-        public IActionResult Post(Klijent klijent)
-        {
-            _context.Klijenti.Add(klijent);
-            _context.SaveChanges();
-            return new JsonResult(klijent);
-        }
-
-        [HttpPut]
-        [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, Klijent klijent)
-        {
-            var smjerIzBaze = _context.Klijenti.Find(sifra);
-            // za sada ručno, kasnije će doći Mapper
-            smjerIzBaze.Ime = klijent.Ime;
-            smjerIzBaze.Prezime = klijent.Prezime;
-            smjerIzBaze.Email = klijent.Email;
-            smjerIzBaze.KontaktBroj = klijent.KontaktBroj;
-
-            _context.Klijenti.Update(smjerIzBaze);
-            _context.SaveChanges();
-
-            return new JsonResult(smjerIzBaze);
-        }
-
-        [HttpDelete]
-        [Route("{sifra:int}")]
-        [Produces("application/json")]
-        public IActionResult Delete(int sifra)
-        {
-            var smjerIzBaze = _context.Klijenti.Find(sifra);
-            _context.Klijenti.Remove(smjerIzBaze);
-            _context.SaveChanges();
-            return new JsonResult(new { poruka = "Obrisano" });
-        }
-
     }
 }
