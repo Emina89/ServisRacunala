@@ -6,14 +6,16 @@ namespace Backend.Models
     public record KlijentDTORead(int Id, string Ime, string Prezime, string Email, string KontaktBroj);
     public record KlijentDTOInsertUpdate([Required(ErrorMessage = "Ime obavezno")] string Ime, string Prezime, string Email, string KontaktBroj);
 
-    public record ServisniNalogDTORead(int Id, DateTime DatumNaloga, string? KlijentId, string? OpisKvara);
+    public record ServisniNalogDTORead(int Id, DateTime DatumNaloga, string? KlijentImePrezime, string? OpisKvara);
     public record ServisniNalogDTOInsertUpdate(
-        [Required(ErrorMessage = "Opis kvara obavezno")]
-        string? OpisKvara,
-        [Required(ErrorMessage = "Klijent obavezno")]
-        string? KlijentId,
-        DateTime? DatumNaloga
-    );
+     [Required(ErrorMessage = "Opis kvara obavezno")]
+    string? OpisKvara,
+     [Required(ErrorMessage = "Klijent obavezno")]
+    int KlijentId, 
+     DateTime? DatumNaloga
+ );
+
+    
 
     public record PrimkaServisaDTORead(
         int Id,

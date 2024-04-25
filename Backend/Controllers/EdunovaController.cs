@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
-    public abstract class EdunovaController<T,TDR,TDI>(EdunovaContext context) : ControllerBase where T : Entitet
+    public abstract class EdunovaController<T, TDR, TDI>(EdunovaContext context) : ControllerBase where T : Entitet
     {
         protected DbSet<T>? DbSet = null;
 
         protected Mapping<T, TDR, TDI> _mapper = new();
         protected abstract void KontrolaBrisanje(T entitet);
-  
+
         protected readonly EdunovaContext _context = context;
 
         [HttpGet]
@@ -32,16 +32,16 @@ namespace Backend.Controllers
             }
         }
         [HttpGet]
-        [Route("{sifra:int}")]
-        public IActionResult GetBySifra(int sifra)
+        [Route("{id:int}")]
+        public IActionResult GetBySifra(int id)
         {
-            if (!ModelState.IsValid || sifra <= 0)
+            if (!ModelState.IsValid || id <= 0)
             {
                 return BadRequest(ModelState);
             }
             try
             {
-                var entitet =NadiEntitet(sifra);
+                var entitet = NadiEntitet(id);
                 return new JsonResult(_mapper.MapInsertUpdateToDTO(entitet));
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace Backend.Controllers
             }
         }
 
-      
+
 
         [HttpPost]
         public IActionResult Post(TDI entitetDTO)
@@ -74,20 +74,20 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Route("{sifra:int}")]
-        public IActionResult Put(int sifra, TDI dto)
+        [Route("{id:int}")]
+        public IActionResult Put(int id, TDI dto)
         {
-            if (sifra <= 0 || !ModelState.IsValid || dto == null)
+            if (id <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest(ModelState);
             }
 
             try
             {
-                var entitetIzBaze = NadiEntitet(sifra);
+                var entitetIzBaze = NadiEntitet(id);
                 _context.Entry(entitetIzBaze).State = EntityState.Detached;
                 var entitet = PromjeniEntitet(dto, entitetIzBaze);
-                entitet.Id = sifra;
+                entitet.Id = id;
                 _context.Update(entitet);
                 _context.SaveChanges();
 
@@ -100,34 +100,34 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        [Route("{sifra:int}")]
-        public IActionResult Delete(int sifra)
+        [Route("{id:int}")]
+        public IActionResult Delete(int id)
         {
-            if (!ModelState.IsValid || sifra <= 0)
+            if (!ModelState.IsValid || id <= 0)
             {
                 return BadRequest();
             }
             try
             {
-                var entitetIzbaze = NadiEntitet(sifra);
+                var entitetIzbaze = NadiEntitet(id);
                 KontrolaBrisanje(entitetIzbaze);
                 _context.Remove(entitetIzbaze);
                 _context.SaveChanges();
-                return Ok("Obrisano"); 
+                return Ok("Obrisano");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-                }
+            }
         }
 
 
-        protected virtual T NadiEntitet(int sifra)
+        protected virtual T NadiEntitet(int id)
         {
-            var entitetIzbaze = DbSet?.Find(sifra);
+            var entitetIzbaze = DbSet?.Find(id);
             if (entitetIzbaze == null)
             {
-                throw new Exception("Ne postoji entitet s šifrom " + sifra + " u bazi");
+                throw new Exception("Ne postoji entitet s šifrom " + id + " u bazi");
             }
 
             return entitetIzbaze;

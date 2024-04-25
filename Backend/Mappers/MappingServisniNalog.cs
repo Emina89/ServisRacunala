@@ -14,7 +14,7 @@ namespace Backend.Mappers
                  new ServisniNalogDTORead(
                     entitet.Id,
                     entitet.DatumNaloga,
-                    entitet.Klijent.Ime,
+                    entitet.Klijent.Ime + " " + entitet.Klijent.Prezime,
                     entitet.OpisKvara));
             }));
 
@@ -27,7 +27,7 @@ namespace Backend.Mappers
                  .ConstructUsing(entitet =>
                   new ServisniNalogDTOInsertUpdate(
                     entitet.OpisKvara,
-                    entitet.Klijent.Ime,
+                    entitet.Klijent.Id,
                      entitet.DatumNaloga
                      
                     ));

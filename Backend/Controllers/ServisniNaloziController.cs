@@ -1,6 +1,8 @@
 ﻿using Backend.Data;
+using Backend.Mappers;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,73 +11,51 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class ServisniNaloziController : ControllerBase
+    public class ServisniNaloziController : EdunovaController<ServisniNalozi, ServisniNalogDTORead, ServisniNalogDTOInsertUpdate>
     {
-        private readonly EdunovaContext _context;
-
-        public ServisniNaloziController(EdunovaContext context)
+        public ServisniNaloziController(EdunovaContext context) : base(context)
         {
-            _context = context;
+            DbSet = _context.ServisniNalozi;
+            _mapper = new MappingServisniNalog();
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        protected override List<ServisniNalogDTORead> UcitajSve()
         {
-            try
+            var lista = DbSet?.Include(p => p.Klijent).ToList();
+            if (lista == null || lista.Count == 0)
             {
-                return new JsonResult(_context.ServisniNalozi.ToList());
+                throw new Exception("Ne postoje podaci u bazi");
             }
-            catch (Exception ex)
+            return _mapper.MapReadList(lista);
+        }
+        protected override ServisniNalozi NadiEntitet(int id)
+        {
+            var entitetIzbaze = DbSet?.Include(p => p.Klijent).FirstOrDefault(p => p.Id == id);
+            if (entitetIzbaze == null)
             {
-                return new JsonResult(ex.ToString());
+                throw new Exception("Ne postoji servisni nalog s ID-om " + id + " u bazi");
             }
 
+            return entitetIzbaze;
+        }
+        protected override ServisniNalozi KreirajEntitet(ServisniNalogDTOInsertUpdate dto)
+        {
+            var klijent = _context.Klijenti.Find(dto.KlijentId) ?? throw new Exception("Ne postoji klijent s ID-om " + dto.KlijentId + " u bazi");
+            var entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.Klijent = klijent;
+            return entitet;
         }
 
-        [HttpPost]
-        public IActionResult Post(ServisniNalozi servisniNalog)
+        protected override ServisniNalozi PromjeniEntitet(ServisniNalogDTOInsertUpdate dto, ServisniNalozi entitet)
         {
-            _context.ServisniNalozi.Add(servisniNalog);
-            _context.SaveChanges();
-            return new JsonResult(servisniNalog);
+            var klijent = _context.Klijenti.Find(dto.KlijentId) ?? throw new Exception("Ne postoji klijent s ID-om " + dto.KlijentId + " u bazi");
+            entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.Klijent = klijent;
+            return entitet;
         }
-
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, ServisniNalozi servisniNalog)
+        protected override void KontrolaBrisanje(ServisniNalozi entitet)
         {
-            if (id != servisniNalog.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingServisniNalog = _context.ServisniNalozi.Find(id);
-            if (existingServisniNalog == null)
-            {
-                return NotFound();
-            }
-
-            existingServisniNalog.KlijentId = servisniNalog.KlijentId;
-            existingServisniNalog.DatumNaloga = servisniNalog.DatumNaloga;
-            existingServisniNalog.OpisKvara = servisniNalog.OpisKvara;
-
-            _context.SaveChanges();
-
-            return new JsonResult(existingServisniNalog);
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var servisniNalog = _context.ServisniNalozi.Find(id);
-            if (servisniNalog == null)
-            {
-                return NotFound();
-            }
-
-            _context.ServisniNalozi.Remove(servisniNalog);
-            _context.SaveChanges();
-
-            return new JsonResult(new { message = "Obrisano", servisniNalog });
+            
         }
     }
 }
