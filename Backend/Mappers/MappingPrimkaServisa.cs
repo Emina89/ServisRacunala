@@ -15,9 +15,9 @@ namespace Backend.Mappers
                             entitet.Id,
                             entitet.Vrsta,
                             entitet.Model,
-                            entitet.ServisniNalog.Id,
-                            entitet.ServisniNalog.Klijent.Ime,
-                            entitet.ServisniNalog.OpisKvara
+                            entitet.ServisniNalogId,
+                            null, // Ne uključujemo ime klijenta
+                            entitet.ServisniNalog != null ? entitet.ServisniNalog.OpisKvara : null // Uključujemo samo OpisKvara
                         ));
             }));
 

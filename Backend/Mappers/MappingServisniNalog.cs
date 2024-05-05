@@ -8,7 +8,8 @@ namespace Backend.Mappers
 
         public MappingServisniNalog()
         {
-            MapperMapReadToDTO = new Mapper(new MapperConfiguration(c =>{
+            MapperMapReadToDTO = new Mapper(new MapperConfiguration(c =>
+            {
                 c.CreateMap<ServisniNalozi, ServisniNalogDTORead>()
                 .ConstructUsing(entitet =>
                  new ServisniNalogDTORead(
@@ -18,23 +19,39 @@ namespace Backend.Mappers
                     entitet.OpisKvara));
             }));
 
-            MapperMapInsertUpdatedFromDTO = new Mapper(new MapperConfiguration(c =>{
-                    c.CreateMap<ServisniNalogDTOInsertUpdate, ServisniNalozi>();
-                }));
+            MapperMapInsertUpdatedFromDTO = new Mapper(new MapperConfiguration(c =>
+            {
+                c.CreateMap<ServisniNalogDTOInsertUpdate, ServisniNalozi>();
+            }));
 
-            MapperMapInsertUpdateToDTO = new Mapper(new MapperConfiguration(c =>{
-                 c.CreateMap<ServisniNalozi, ServisniNalogDTOInsertUpdate>()
-                 .ConstructUsing(entitet =>
-                  new ServisniNalogDTOInsertUpdate(
-                    entitet.OpisKvara,
-                    entitet.Klijent.Id,
-                     entitet.DatumNaloga
-                     
+            MapperMapReadToDTO = new Mapper(new MapperConfiguration(c =>
+            {
+                c.CreateMap<ServisniNalozi, ServisniNalogDTORead>()
+                .ConstructUsing(entitet =>
+                    new ServisniNalogDTORead(
+                        entitet.Id,
+                        entitet.DatumNaloga,
+                        entitet.Klijent.Ime + " " + entitet.Klijent.Prezime,
+                        entitet.OpisKvara));
+            }));
+
+            MapperMapInsertUpdatedFromDTO = new Mapper(new MapperConfiguration(c =>
+            {
+                c.CreateMap<ServisniNalogDTOInsertUpdate, ServisniNalozi>();
+            }));
+
+            MapperMapInsertUpdateToDTO = new Mapper(new MapperConfiguration(c =>
+            {
+                c.CreateMap<ServisniNalozi, ServisniNalogDTOInsertUpdate>()
+                .ConstructUsing(entitet =>
+                    new ServisniNalogDTOInsertUpdate(
+                        entitet.OpisKvara,
+                        entitet.Klijent.Id,
+                        entitet.Klijent.Ime, // Dodano ime klijenta
+                        entitet.Klijent.Prezime, // Dodano prezime klijenta
+                        entitet.DatumNaloga
                     ));
-             }));
+            }));
         }
-
-
-
     }
 }

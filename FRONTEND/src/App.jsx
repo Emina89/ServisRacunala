@@ -12,6 +12,9 @@ import ServisniNaloziPromjena from './pages/servisniNalozi/ServisniNaloziPromjen
 import PrimkaServisa from './pages/primkaServisa/PrimkaServisa'; // Importanje PrimkaServisa komponente
 import PrimkaServisaDodaj from './pages/primkaServisa/PrimkaServisaDodaj'; // Importanje PrimkaServisaDodaj komponente
 import PrimkaServisaPromjena from './pages/primkaServisa/PrimkaServisaPromjena';
+import AktivnostServis from './pages/aktivnostServis/AktivnostServis';
+import AktivnostServisDodaj from './pages/aktivnostServis/AktivnostServisDodaj';
+import AktivnostServisPromjena from './pages/aktivnostServis/AktivnostServisPromjena';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -36,6 +39,10 @@ function App() {
         <Route path={RoutesNames.PRIMKA_SERVISA} element={<PrimkaServisa />} />
         <Route path={RoutesNames.PRIMKA_SERVISA_NOVI} element={<PrimkaServisaDodaj />} />
         <Route path={RoutesNames.PRIMKA_SERVISA_PROMJENA} element={<PrimkaServisaPromjena />} />
+
+        <Route path={RoutesNames.AKTIVNOST_SERVIS_PREGLED} element={<AktivnostServis />} />
+        <Route path={RoutesNames.AKTIVNOST_SERVIS_NOVI} element={<AktivnostServisDodaj />} />
+        <Route path={RoutesNames.AKTIVNOST_SERVIS_PROMJENA} element={<AktivnostServisPromjena />} />
       </Routes>
     </>
   );

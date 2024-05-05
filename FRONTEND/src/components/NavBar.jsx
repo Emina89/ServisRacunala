@@ -33,8 +33,8 @@ export default function NavBar() {
                                 <NavDropdown.Item onClick={() => navigate(RoutesNames.PRIMKA_SERVISA)}>
                                     Primka Servisa
                                 </NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.4">
-                                    Aktivnost Servis
+                                <NavDropdown.Item onClick={() => navigate(RoutesNames.AKTIVNOST_SERVIS_PREGLED)}>
+                                    AktivnostServis
                                 </NavDropdown.Item>
                             </NavDropdown>
                         </Nav>

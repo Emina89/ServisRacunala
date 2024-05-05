@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button, Container, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -20,10 +19,6 @@ export default function PrimkaServisa() {
             console.log(response.poruka);
             alert('Pogledaj konzolu');
         }
-        useEffect(() => {
-            dohvatiPrimkaServisa();
-        }, []);
-        
     };
 
     const obrisiPrimkaServisa = async (id) => {
@@ -34,7 +29,6 @@ export default function PrimkaServisa() {
             console.log(response.poruka);
             alert('Ne možete obrisati primku servisa jer je povezana sa servisnim nalogom.');
         }
-        
     };
 
     return (
@@ -58,7 +52,8 @@ export default function PrimkaServisa() {
                             <td>{primka.id}</td>
                             <td>{primka.vrsta}</td>
                             <td>{primka.model}</td>
-                            <td>{primka.ServisniNalogId}</td>
+                            <td>{primka.servisniNalogId}</td>
+
                             <td>
                                 <Button variant="danger" onClick={() => obrisiPrimkaServisa(primka.id)}>
                                     Obriši

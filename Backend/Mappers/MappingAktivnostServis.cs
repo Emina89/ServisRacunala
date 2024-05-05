@@ -30,7 +30,9 @@ namespace Backend.Mappers
                  new AktivnostServisDTOInsertUpdate(
                    entitet.DatumZavrsetka,
                    entitet.Opis,
-                   entitet.PrimkaServisaId
+                   entitet.PrimkaServisaId,
+                   entitet.PrimkaServisa.Vrsta,
+                    entitet.PrimkaServisa.Model
                    ));
             }));
         }

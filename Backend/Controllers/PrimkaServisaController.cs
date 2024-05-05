@@ -1,4 +1,6 @@
-﻿using Backend.Data;
+﻿using AutoMapper;
+using Backend.Data;
+using Backend.Mappers;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,72 +12,54 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class PrimkaServisaController : ControllerBase
+    public class PrimkaServisaController : EdunovaController<PrimkaServisa, PrimkaServisaDTORead, PrimkaServisaDTOInsertUpdate>
     {
-        private readonly EdunovaContext _context;
-
-        public PrimkaServisaController(EdunovaContext context)
+        public PrimkaServisaController(EdunovaContext context) : base(context)
         {
-            _context = context;
+            DbSet = _context.PrimkaServisa;
+            _mapper = new MappingPrimkaServisa();
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        protected override List<PrimkaServisaDTORead> UcitajSve()
         {
-            try
+            var lista = DbSet?.Include(p => p.ServisniNalog.Klijent).ToList();
+            if (lista == null || lista.Count == 0)
             {
-                return new JsonResult(_context.PrimkaServisa.Include(p => p.ServisniNalog).ToList());
+                throw new Exception("Ne postoje podaci u bazi");
             }
-            catch (Exception ex)
-            {
-                return new JsonResult(ex.ToString());
-            }
+            return _mapper.MapReadList(lista);
         }
 
-        [HttpPost]
-        public IActionResult Post(PrimkaServisa primkaServisa)
+        protected override PrimkaServisa NadiEntitet(int id)
         {
-            _context.PrimkaServisa.Add(primkaServisa);
-            _context.SaveChanges();
-            return new JsonResult(primkaServisa);
+            var entitetIzbaze = DbSet?.Include(p => p.ServisniNalog.Klijent).FirstOrDefault(p => p.Id == id);
+            if (entitetIzbaze == null)
+            {
+                throw new Exception("Ne postoji primka servisa s ID-om " + id + " u bazi");
+            }
+
+            return entitetIzbaze;
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, PrimkaServisa primkaServisa)
+        protected override PrimkaServisa KreirajEntitet(PrimkaServisaDTOInsertUpdate dto)
         {
-            if (id != primkaServisa.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingPrimkaServisa = _context.PrimkaServisa.Find(id);
-            if (existingPrimkaServisa == null)
-            {
-                return NotFound();
-            }
-
-            existingPrimkaServisa.Vrsta = primkaServisa.Vrsta;
-            existingPrimkaServisa.Model = primkaServisa.Model;
-            existingPrimkaServisa.ServisniNalogId = primkaServisa.ServisniNalogId;
-
-            _context.SaveChanges();
-
-            return new JsonResult(existingPrimkaServisa);
+            var servisniNalog = _context.ServisniNalozi.Find(dto.ServisniNalogId) ?? throw new Exception("Ne postoji servisni nalog s ID-om " + dto.ServisniNalogId + " u bazi");
+            var entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.ServisniNalog = servisniNalog;
+            return entitet;
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        protected override PrimkaServisa PromjeniEntitet(PrimkaServisaDTOInsertUpdate dto, PrimkaServisa entitet)
         {
-            var primkaServisa = _context.PrimkaServisa.Find(id);
-            if (primkaServisa == null)
-            {
-                return NotFound();
-            }
+            var servisniNalog = _context.ServisniNalozi.Find(dto.ServisniNalogId) ?? throw new Exception("Ne postoji servisni nalog s ID-om " + dto.ServisniNalogId + " u bazi");
+            entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.ServisniNalog = servisniNalog;
+            return entitet;
+        }
 
-            _context.PrimkaServisa.Remove(primkaServisa);
-            _context.SaveChanges();
-
-            return new JsonResult(new { message = "Obrisano", primkaServisa });
+        protected override void KontrolaBrisanje(PrimkaServisa entitet)
+        {
+            // Dodajte kontrolu brisanja ako je potrebno
         }
     }
 }

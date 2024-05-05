@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { RoutesNames } from '../../constants';
 import ServisniNaloziService from '../../service/ServisniNaloziService';
 import KlijentService from '../../service/KlijentService';
+import moment from 'moment';
 
 export default function ServisniNalozi() {
     const [nalazi, setNalazi] = useState([]);
@@ -24,7 +25,7 @@ export default function ServisniNalozi() {
 
         // Učitaj podatke o klijentima za svaki servisni nalog
         for (const nalog of nalazi) {
-            const odgovorKlijent = await KlijentService.getById(nalog.KlijentiId);
+            const odgovorKlijent = await KlijentService.getById(nalog.klijentId);
             if (odgovorKlijent.greska) {
                 console.log('Greška prilikom dohvatanja podataka o klijentu.');
                 alert('Pogledaj konzolu');
@@ -58,6 +59,14 @@ export default function ServisniNalozi() {
         dohvatiNalaze();
     }
 
+    function formatirajDatum(datumNalogaa) {
+        let mdp = moment.utc(datumNalogaa);
+        if (mdp.hour() === 0 && mdp.minutes() === 0) {
+            return mdp.format('DD. MM. YYYY.');
+        }
+        return mdp.format('DD. MM. YYYY. HH:mm');
+    }
+
     return (
         <Container>
             <Button
@@ -73,7 +82,7 @@ export default function ServisniNalozi() {
                 <thead>
                     <tr>
                         <th>R.br.</th>
-                        <th>Klijenti ID</th>
+                        <th>Klijent</th>
                         <th>Datum naloga</th>
                         <th>Opis kvara</th>
                         <th>Akcije</th>
@@ -84,8 +93,14 @@ export default function ServisniNalozi() {
                         nalazi.map((nalog, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{nalog.KlijentiId}</td> {/* Ovdje koristimo KlijentiId */}
-                                <td>{nalog.datumNaloga}</td>
+                                <td>{nalog.klijent ? `${nalog.klijent.ime} ${nalog.klijent.prezime}` : ''}</td>
+                                <td>
+                                    <p>
+                                        {nalog.datumNaloga
+                                            ? formatirajDatum(nalog.datumNaloga)
+                                            : 'Nije definirano'}
+                                    </p>
+                                </td>
                                 <td>{nalog.opisKvara}</td>
                                 <td>
                                     <Button

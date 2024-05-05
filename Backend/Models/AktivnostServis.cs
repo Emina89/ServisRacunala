@@ -1,8 +1,11 @@
 ﻿using Backend.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class AktivnostServis
-{
+
+
+    public class AktivnostServis : Entitet
+    {
+
     public int Id { get; set; }
 
     [ForeignKey("PrimkaServisa")]

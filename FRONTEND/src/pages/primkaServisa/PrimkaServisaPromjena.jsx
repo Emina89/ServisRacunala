@@ -1,96 +1,78 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { RoutesNames } from '../../constants';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import PrimkaServisaService from '../../service/PrimkaServisaService';
 
-export default function PrimkaServisa(){
+export default function PrimkaServisaPromjena() {
     const navigate = useNavigate();
     const routeParams = useParams();
-    const [primka, setPrimkaServisa] = useState({});
+    const [primka, setPrimka] = useState({});
+    
+    useEffect(() => {
+        async function fetchData() {
+            const odgovor = await PrimkaServisaService.getById(routeParams.id);
+            if (odgovor.greska) {
+                console.log(odgovor.poruka);
+                alert('Pogledaj konzolu');
+                return;
+            }
+            setPrimka(odgovor.poruka);
+        }
 
-   async function dohvatiPrimkaServisa(){
-        const o = await PrimkaServisaService.getById(routeParams.id);
-        if(o.greska){
-            console.log(o.poruka);
-            alert('pogledaj konzolu');
+        fetchData();
+    }, [routeParams.id]);
+
+    async function promjeniPrimku(novaPrimka) {
+        const odgovor = await PrimkaServisaService.put(routeParams.id, novaPrimka);
+        if (odgovor.greska) {
+            console.log(odgovor.poruka);
+            alert('Pogledaj konzolu');
             return;
         }
-        setPrimkaServisa(o.poruka);
-   }
-
-   async function promjeni(primka){
-    const odgovor = await PrimkaServisaService.put(routeParams.id,primka);
-    if (odgovor.greska){
-        console.log(odgovor.poruka);
-        alert('Pogledaj konzolu');
-        return;
+        navigate('/primka-servisa');
     }
-    navigate(RoutesNames.PRIMKA_SERVISA);
-}
 
-   useEffect(()=>{
-    dohvatiPrimkaServisa();
-   },[]);
-
-    function obradiSubmit(e){ 
-        e.preventDefault();
-        
-
-        const podaci = new FormData(e.target);
-
-        const primka = {
+    function handleSubmit(event) {
+        event.preventDefault();
+        const podaci = new FormData(event.target);
+        const noviServisniNalog = {
             vrsta: podaci.get('vrsta'),
             model: podaci.get('model'),
-           servisniNalogId: podaci.get('servisniNalogId')
-            
-                      
+            servisniNalogId: podaci.get('servisniNalogId')
         };
-     
-        promjeni(primka);
-
+        const novaPrimka = {
+            ...primka, // Koristimo postojeće podatke primke
+            ...noviServisniNalog // Dodajemo nove podatke servisnog naloga
+        };
+        promjeniPrimku(novaPrimka);
     }
 
     return (
-
         <Container>
-        <Form onSubmit={obradiSubmit}>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="vrsta">
+                    <Form.Label>Vrsta</Form.Label>
+                    <Form.Control type="text" name="vrsta" defaultValue={primka.vrsta} required />
+                </Form.Group>
 
-            <Form.Group controlId="vrsta">
-                <Form.Label>Vrsta</Form.Label>
-                <Form.Control defaultValue={primka.vrsta} type="text" name="vrsta" required />
-            </Form.Group>
+                <Form.Group controlId="model">
+                    <Form.Label>Model</Form.Label>
+                    <Form.Control type="text" name="model" defaultValue={primka.model} required />
+                </Form.Group>
 
-            <Form.Group controlId="model">
-                <Form.Label>Model</Form.Label>
-                <Form.Control defaultValue={primka.model} type="text" name="model" />
-            </Form.Group>
+                <Form.Group controlId="servisniNalogId">
+                    <Form.Label>Servisni Nalog ID</Form.Label>
+                    <Form.Control type="text" name="servisniNalogId" defaultValue={primka.servisniNalogId} required />
+                </Form.Group>
 
-            <Form.Group controlId="servisniNalogId">
-                <Form.Label>Servisni NalogId</Form.Label>
-                <Form.Control defaultValue={primka.servisniNalogId} type="text" name="servisniNalogId" />
-            </Form.Group>
+                <Button variant="primary" type="submit">
+                    Promjeni
+                </Button>
 
-    
-
-            
-
-                <hr />
-                <Row>
-                    <Col>
-                        <Link className="btn btn-danger siroko" to={RoutesNames.PRIMKA_SERVISA}>
-                            Odustani
-                        </Link>
-                    </Col>
-                    <Col>
-                        <Button className="siroko" variant="primary" type="submit">
-                            Promjeni
-                        </Button>
-                    </Col>
-                </Row>
-
+                <Link to="/primka-servisa" className="btn btn-danger ml-2">
+                    Odustani
+                </Link>
             </Form>
         </Container>
-
     );
 }

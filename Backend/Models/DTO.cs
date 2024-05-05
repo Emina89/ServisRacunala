@@ -7,13 +7,15 @@ namespace Backend.Models
     public record KlijentDTOInsertUpdate([Required(ErrorMessage = "Ime obavezno")] string Ime, string Prezime, string Email, string KontaktBroj);
 
     public record ServisniNalogDTORead(int Id, DateTime DatumNaloga, string? KlijentImePrezime, string? OpisKvara);
-    public record ServisniNalogDTOInsertUpdate(
-     [Required(ErrorMessage = "Opis kvara obavezno")]
+   public record ServisniNalogDTOInsertUpdate(
+    [Required(ErrorMessage = "Opis kvara obavezno")]
     string? OpisKvara,
-     [Required(ErrorMessage = "Klijent obavezno")]
+    [Required(ErrorMessage = "Klijent obavezno")]
     int KlijentId, 
-     DateTime? DatumNaloga
- );
+    string? ImeKlijenta, // Dodano ime klijenta
+    string? PrezimeKlijenta, // Dodano prezime klijenta
+    DateTime? DatumNaloga
+);
 
     
 
@@ -33,6 +35,7 @@ namespace Backend.Models
         string Model,
         [Required(ErrorMessage = "Servisni nalog obavezan")]
         int ServisniNalogId
+
     );
 
     public record AktivnostServisDTORead(
@@ -50,7 +53,9 @@ namespace Backend.Models
         [Required(ErrorMessage = "Opis obavezan")]
         string Opis,
         [Required(ErrorMessage = "Primka servisa obavezna")]
-        int PrimkaServisaId
+        int PrimkaServisaId,
+         string? PrimkaServisaVrsta,
+        string? PrimkaServisaModel
 
     );
 }

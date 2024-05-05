@@ -1,6 +1,8 @@
 ﻿using Backend.Data;
+using Backend.Mappers;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,72 +11,54 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class AktivnostServisController : ControllerBase
+    public class AktivnostServisController : EdunovaController<AktivnostServis, AktivnostServisDTORead, AktivnostServisDTOInsertUpdate>
     {
-        private readonly EdunovaContext _context;
-
-        public AktivnostServisController(EdunovaContext context)
+        public AktivnostServisController(EdunovaContext context) : base(context)
         {
-            _context = context;
+            DbSet = _context.AktivnostServis;
+            _mapper = new MappingAktivnostServis();
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        protected override List<AktivnostServisDTORead> UcitajSve()
         {
-            try
+            var lista = DbSet?.Include(p => p.PrimkaServisa).ToList();
+            if (lista == null || lista.Count == 0)
             {
-                return new JsonResult(_context.AktivnostServis.ToList());
+                throw new Exception("Ne postoje podaci u bazi");
             }
-            catch (Exception ex)
-            {
-                return new JsonResult(ex.ToString());
-            }
+            return _mapper.MapReadList(lista);
         }
 
-        [HttpPost]
-        public IActionResult Post(AktivnostServis aktivnostServis)
+        protected override AktivnostServis NadiEntitet(int id)
         {
-            _context.AktivnostServis.Add(aktivnostServis);
-            _context.SaveChanges();
-            return new JsonResult(aktivnostServis);
+            var entitetIzbaze = DbSet?.Include(p => p.PrimkaServisa).FirstOrDefault(p => p.Id == id);
+            if (entitetIzbaze == null)
+            {
+                throw new Exception("Ne postoji aktivnost servisa s ID-om " + id + " u bazi");
+            }
+
+            return entitetIzbaze;
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, AktivnostServis aktivnostServis)
+        protected override AktivnostServis KreirajEntitet(AktivnostServisDTOInsertUpdate dto)
         {
-            if (id != aktivnostServis.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingAktivnostServis = _context.AktivnostServis.Find(id);
-            if (existingAktivnostServis == null)
-            {
-                return NotFound();
-            }
-
-            existingAktivnostServis.PrimkaServisaId = aktivnostServis.PrimkaServisaId;
-            existingAktivnostServis.DatumZavrsetka = aktivnostServis.DatumZavrsetka;
-            existingAktivnostServis.Opis = aktivnostServis.Opis;
-
-            _context.SaveChanges();
-
-            return new JsonResult(existingAktivnostServis);
+            var primkaServisa = _context.PrimkaServisa.Find(dto.PrimkaServisaId) ?? throw new Exception("Ne postoji primka servisa s ID-om " + dto.PrimkaServisaId + " u bazi");
+            var entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.PrimkaServisa = primkaServisa;
+            return entitet;
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        protected override AktivnostServis PromjeniEntitet(AktivnostServisDTOInsertUpdate dto, AktivnostServis entitet)
         {
-            var aktivnostServis = _context.AktivnostServis.Find(id);
-            if (aktivnostServis == null)
-            {
-                return NotFound();
-            }
+            var primkaServisa = _context.PrimkaServisa.Find(dto.PrimkaServisaId) ?? throw new Exception("Ne postoji primka servisa s ID-om " + dto.PrimkaServisaId + " u bazi");
+            entitet = _mapper.MapInsertUpdatedFromDTO(dto);
+            entitet.PrimkaServisa = primkaServisa;
+            return entitet;
+        }
 
-            _context.AktivnostServis.Remove(aktivnostServis);
-            _context.SaveChanges();
-
-            return new JsonResult(new { message = "Obrisano", aktivnostServis });
+        protected override void KontrolaBrisanje(AktivnostServis entitet)
+        {
+            // Ovdje možeš implementirati kontrolu brisanja ako je potrebno
         }
     }
 }
