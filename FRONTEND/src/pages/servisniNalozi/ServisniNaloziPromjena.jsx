@@ -9,7 +9,6 @@ export default function ServisniNaloziPromjena() {
     const navigate = useNavigate();
     const routeParams = useParams();
     const [nalog, setNalog] = useState({});
-    const [klijent, setKlijent] = useState({});
     const [klijenti, setKlijenti] = useState([]);
 
     useEffect(() => {
@@ -26,31 +25,20 @@ export default function ServisniNaloziPromjena() {
 
                 setNalog(odgovorNalog.poruka);
 
-                const odgovorKlijent = await KlijentService.getById(odgovorNalog.poruka.klijentId);
-                if (odgovorKlijent.greska) {
-                    console.log('Greška prilikom dohvatanja podataka o klijentu.');
+                const odgovorKlijenti = await KlijentService.get();
+                if (odgovorKlijenti.greska) {
+                    console.log('Greška prilikom dohvatanja podataka o klijentima.');
                     alert('Pogledaj konzolu');
                     return;
                 }
-                setKlijent(odgovorKlijent.poruka);
+                setKlijenti(odgovorKlijenti.poruka);
             } catch (error) {
                 console.error('Greška prilikom dohvatanja podataka:', error);
                 alert('Došlo je do greške prilikom dohvatanja podataka.');
             }
         }
 
-        async function fetchKlijenti() {
-            const odgovor = await KlijentService.get();
-            if (odgovor.greska) {
-                console.log(odgovor.poruka);
-                alert('Pogledaj konzolu');
-                return;
-            }
-            setKlijenti(odgovor.poruka);
-        }
-
         fetchData();
-        fetchKlijenti();
     }, [routeParams.id]);
 
     async function promjeni(noviNalog) {
@@ -71,11 +59,22 @@ export default function ServisniNaloziPromjena() {
             klijentId: podaci.get('klijentId'),
             datumNaloga: podaci.get('datumNaloga'),
             opisKvara: podaci.get('opisKvara'),
-            imeKlijenta: klijent.ime,
-            prezimeKlijenta: klijent.prezime
+            imeKlijenta: podaci.get('imeKlijenta'),
+            prezimeKlijenta: podaci.get('prezimeKlijenta')
         };
 
         promjeni(noviNalog);
+    }
+
+    function handleKlijentChange(event) {
+        const selectedKlijentId = event.target.value;
+        const selectedKlijent = klijenti.find(klijent => klijent.id === parseInt(selectedKlijentId));
+        setNalog(prevNalog => ({
+            ...prevNalog,
+            klijentId: selectedKlijentId,
+            imeKlijenta: selectedKlijent.ime,
+            prezimeKlijenta: selectedKlijent.prezime,
+        }));
     }
 
     return (
@@ -83,7 +82,8 @@ export default function ServisniNaloziPromjena() {
             <Form onSubmit={obradiSubmit}>
                 <Form.Group controlId="klijentId">
                     <Form.Label>Klijent</Form.Label>
-                    <Form.Select name="klijentId" defaultValue={nalog.klijentId}>
+                    <Form.Select name="klijentId" value={nalog.klijentId} onChange={handleKlijentChange}>
+                        <option value="">Odaberite klijenta</option>
                         {klijenti.map((klijent, index) => (
                             <option key={index} value={klijent.id}>
                                 {klijent.ime} {klijent.prezime}
@@ -101,6 +101,9 @@ export default function ServisniNaloziPromjena() {
                     <Form.Label>Opis kvara</Form.Label>
                     <Form.Control as="textarea" rows={3} name="opisKvara" defaultValue={nalog.opisKvara} />
                 </Form.Group>
+
+                <input type="hidden" name="imeKlijenta" value={nalog.imeKlijenta} />
+                <input type="hidden" name="prezimeKlijenta" value={nalog.prezimeKlijenta} />
 
                 <Button variant="primary" type="submit">
                     Promjeni
