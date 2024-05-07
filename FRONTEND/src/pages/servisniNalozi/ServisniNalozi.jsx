@@ -59,9 +59,9 @@ export default function ServisniNalozi() {
         dohvatiNalaze();
     }
 
-    function formatirajDatum(datumNalogaa) {
-        let mdp = moment.utc(datumNalogaa);
-        if (mdp.hour() === 0 && mdp.minutes() === 0) {
+    function formatirajDatum(datum) {
+        let mdp = moment.utc(datum);
+        if (mdp.hour() == 0 && mdp.minutes() == 0) {
             return mdp.format('DD. MM. YYYY.');
         }
         return mdp.format('DD. MM. YYYY. HH:mm');
@@ -82,7 +82,7 @@ export default function ServisniNalozi() {
                 <thead>
                     <tr>
                         <th>R.br.</th>
-                        <th>Klijent</th>
+                        <th>Ime i prezime klijenta</th>
                         <th>Datum naloga</th>
                         <th>Opis kvara</th>
                         <th>Akcije</th>
@@ -93,14 +93,8 @@ export default function ServisniNalozi() {
                         nalazi.map((nalog, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{nalog.klijent ? `${nalog.klijent.ime} ${nalog.klijent.prezime}` : ''}</td>
-                                <td>
-                                    <p>
-                                        {nalog.datumNaloga
-                                            ? formatirajDatum(nalog.datumNaloga)
-                                            : 'Nije definirano'}
-                                    </p>
-                                </td>
+                                <td>{nalog.klijentImePrezime}</td>
+                                <td>{formatirajDatum(nalog.datumNaloga)}</td>
                                 <td>{nalog.opisKvara}</td>
                                 <td>
                                     <Button

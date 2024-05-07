@@ -16,8 +16,7 @@ namespace Backend.Mappers
                             entitet.Vrsta,
                             entitet.Model,
                             entitet.ServisniNalogId,
-                            null, // Ne uključujemo ime klijenta
-                            entitet.ServisniNalog != null ? entitet.ServisniNalog.OpisKvara : null // Uključujemo samo OpisKvara
+                            entitet.ServisniNalog != null ? entitet.ServisniNalog.OpisKvara : null
                         ));
             }));
 
@@ -30,7 +29,7 @@ namespace Backend.Mappers
             MapperMapInsertUpdateToDTO = new Mapper(new MapperConfiguration(c =>
             {
                 c.CreateMap<PrimkaServisa, PrimkaServisaDTOInsertUpdate>()
-                    .ForMember(dest => dest.ServisniNalogId, opt => opt.MapFrom(src => src.ServisniNalog.Id));
+                    .ForMember(dest => dest.ServisniNalogId, opt => opt.MapFrom(src => src.ServisniNalogId));
             }));
         }
     }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Backend.Data;
+﻿using Backend.Data;
 using Backend.Mappers;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -52,14 +51,39 @@ namespace Backend.Controllers
         protected override PrimkaServisa PromjeniEntitet(PrimkaServisaDTOInsertUpdate dto, PrimkaServisa entitet)
         {
             var servisniNalog = _context.ServisniNalozi.Find(dto.ServisniNalogId) ?? throw new Exception("Ne postoji servisni nalog s ID-om " + dto.ServisniNalogId + " u bazi");
-            entitet = _mapper.MapInsertUpdatedFromDTO(dto);
-            entitet.ServisniNalog = servisniNalog;
+            entitet.Vrsta = dto.Vrsta;
+            entitet.Model = dto.Model;
+            entitet.ServisniNalogId = dto.ServisniNalogId;
+
+            // Ispravka: Ažurirajte opisKvara na entitetu ServisniNalog
+            if (entitet.ServisniNalog != null)
+            {
+                entitet.ServisniNalog.OpisKvara = dto.OpisKvara;
+            }
+
+            // Provjera jesu li se promjene primijenile
+            var promjena = _context.SaveChanges();
+            if (promjena <= 0)
+            {
+                throw new Exception("Došlo je do problema prilikom spremanja promjena u bazu podataka.");
+            }
+
             return entitet;
         }
 
         protected override void KontrolaBrisanje(PrimkaServisa entitet)
         {
-            // Dodajte kontrolu brisanja ako je potrebno
+            // Implementirajte logiku provjere prije brisanja entiteta
+            // Na primjer, možete provjeriti je li entitet povezan s drugim entitetima i dodati odgovarajuće kontrole prije brisanja
+            if (entitet == null)
+            {
+                throw new ArgumentNullException(nameof(entitet));
+            }
+            // Primjer kontrole: provjerite je li PrimkaServisa povezana s nekim drugim entitetima prije nego što ju izbrišete
+            if (entitet.ServisniNalog != null)
+            {
+                throw new Exception("Nije moguće izbrisati primku servisa jer je povezana s nekim servisnim nalogom.");
+            }
         }
     }
 }
